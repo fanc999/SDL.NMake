@@ -41,6 +41,14 @@ SDL_DEP_LIBS =	\
 	version.lib	\
 	winmm.lib
 
+!if $(VSVER) > 12
+!if "$(CFG)" == "Debug" || "$(CFG)" == "debug"
+SDL_DEP_LIBS = $(SDL_DEP_LIBS) ucrtd.lib
+!else
+SDL_DEP_LIBS = $(SDL_DEP_LIBS) ucrt.lib
+!endif
+!endif
+
 SDL_TEST_LDFLAG = $(LDFLAGS) /subsystem:console
 
 # Determine what sources will be used for our build
