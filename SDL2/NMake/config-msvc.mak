@@ -14,6 +14,12 @@ SDL_CFLAGS =	\
 	/DHAVE_M_PI			\
 	/wd4244
 
+SDL_ADDITIONAL_SYSTEM_LIBS =
+
+!if $(VSVER) > 10
+SDL_CFLAGS = $(SDL_CFLAGS) /DSDL_VIDEO_RENDER_D3D11=1
+!endif
+
 # WinRT/UWP builds are not supported yet
 SDL_WINRT_CXXFLAGS =	\
 	$(SDL_CFLAGS) /ZW	\
@@ -39,7 +45,8 @@ SDL_DEP_LIBS =	\
 	shell32.lib	\
 	user32.lib	\
 	version.lib	\
-	winmm.lib
+	winmm.lib	\
+	$(SDL_ADDITIONAL_SYSTEM_LIBS)
 
 !if $(VSVER) > 12
 !if "$(CFG)" == "Debug" || "$(CFG)" == "debug"
@@ -59,6 +66,33 @@ sdl2_OBJS = $(sdl2_all_OBJS)
 !message WINRT configuration not supported for MSVC 2012 or earlier, disabling
 WINRT=
 !endif
+!endif
+
+!if "$(ENABLE_XAUDIO2)" == "1"
+!if "$(WINRT)" == "1"
+# Todo: Support WinRT/UWP builds
+!else
+# Note: You need the June 2010 DirectX SDK, and ensure that $(DXSDK_DIR)\include
+#       and $(DXSDK_DIR)\lib\[x86|x64] are in your INCLUDE and LIB paths respectively,
+#       to enable XAudio2 support.  Alternatively, use DXSDK_DIR=<root_path_of_your_dx201006_sdk>
+SDL_XAUDIO2_CFLAGS =	\
+	$(SDL_CFLAGS)	\
+	/DSDL_AUDIO_DRIVER_XAUDIO2=1	\
+	/DSDL_XAUDIO2_HAS_SDK=1
+
+!if "$(DXSDK_DIR)" != ""
+SDL_XAUDIO2_CFLAGS = /I"$(DXSDK_DIR)\include" $(SDL_XAUDIO2_CFLAGS)
+!if "$(PLAT)" == "x64"
+LDFLAGS = $(LDFLAGS) /libpath:"$(DXSDK_DIR)\lib\x64"
+!else
+LDFLAGS = $(LDFLAGS) /libpath:"$(DXSDK_DIR)\lib\x86"
+!endif
+!endif
+
+SDL_ADDITIONAL_SYSTEM_LIBS = $(SDL_ADDITIONAL_SYSTEM_LIBS) dxguid.lib
+!endif
+!else
+SDL_XAUDIO2_CFLAGS = $(SDL_CFLAGS)
 !endif
 
 !if "$(WINRT)" == "1"

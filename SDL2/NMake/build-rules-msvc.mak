@@ -54,10 +54,6 @@ $<
 $<
 <<
 
-{..\src\audio\xaudio2\}.c{$(CFG)\$(PLAT)\SDL2\}.obj::
-	$(CC) $(SDL_CFLAGS) $(SDL_INCLUDES) /Fo$(CFG)\$(PLAT)\SDL2\ /c @<<
-$<
-<<
 {..\src\audio\xaudio2\}.cpp{$(CFG)\$(PLAT)\SDL2\}.obj::
 	$(CXX) $(SDL_WINRT_CXXFLAGS) $(SDL_INCLUDES) /Fo$(CFG)\$(PLAT)\SDL2\ /c @<<
 $<
@@ -330,6 +326,11 @@ $(CFG)\$(PLAT)\testautomation.exe: $(SDL_LIBS) $(SDLTEST_LIB) $(sdl2_automation_
 # 	$(CC)|$(CXX) $(cflags) /Fo$(obj_destdir) /c @<<
 # $(srcfile)
 # <<
+$(CFG)\$(PLAT)\SDL2\SDL_xaudio2.obj: $(CFG)\$(PLAT)\SDL2 ..\src\audio\xaudio2\SDL_xaudio2.c
+	$(CC) $(SDL_XAUDIO2_CFLAGS) $(SDL_INCLUDES) ..\src\audio\xaudio2\SDL_xaudio2.c /Fo$@ /c
+
+$(CFG)\$(PLAT)\SDL2\SDL_audio.obj: $(CFG)\$(PLAT)\SDL2 ..\src\audio\SDL_audio.c
+	$(CC) $(SDL_XAUDIO2_CFLAGS) $(SDL_INCLUDES) ..\src\audio\SDL_audio.c /Fo$@ /c
 
 clean:
 	@-del /f /q $(CFG)\$(PLAT)\*.lib
