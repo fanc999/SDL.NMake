@@ -14,25 +14,25 @@
 # $<
 # <<
 
-.SUFFIXES: .c .S .obj
+.SUFFIXES: .c .S .obj .asm
 
 {..\src\libmpg123\}.c{$(CFG)\$(PLAT)\libmpg123\}.obj::
-	$(CC) $(LIBMPG123_CFLAGS) $(LIBMPG123_INCLUDES) /Fo$(CFG)\$(PLAT)\libmpg123\ /c @<<
+	$(CC) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /Fo$(CFG)\$(PLAT)\libmpg123\ /c @<<
 $<
 <<
 
 {..\src\compat\}.c{$(CFG)\$(PLAT)\mpg123-compat\}.obj::
-	$(CC) $(LIBMPG123_CFLAGS) $(LIBMPG123_INCLUDES) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
+	$(CC) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
 $<
 <<
 
 {..\ports\MSVC++\}.c{$(CFG)\$(PLAT)\mpg123-compat\}.obj::
-	$(CC) $(LIBMPG123_CFLAGS) $(LIBMPG123_INCLUDES) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
+	$(CC) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
 $<
 <<
 
 {..\src\libmpg123\}.S{$(CFG)\$(PLAT)\libmpg123\}.obj:
-	$(CPP) $(LIBMPG123_INCLUDES) /EP /TC $< /nologo > $(CFG)\$(PLAT)\libmpg123\$(@B).asm
+	$(CPP) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /FI..\nmake\mangle.h /EP /TC $< /nologo > $(CFG)\$(PLAT)\libmpg123\$(@B).asm
 	$(YASM) $(YASM_BASE_FLAGS) $(YASM_ARCH_FLAGS) -o $@ $(CFG)\$(PLAT)\libmpg123\$(@B).asm
 
 # Rules for building .rc files

@@ -30,7 +30,7 @@ MPG123_OPT_ASM_FLAGS =	\
 	/DOPT_3DNOWEXT	\
 	/DOPT_SSE
 
-YASM_ARCH_FLAGS = -m x86 -f win32 -P ..\src\libmpg123\mangle.h
+YASM_ARCH_FLAGS = -m x86 -f win32
 !endif
 
 !else
