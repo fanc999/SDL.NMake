@@ -5,5 +5,11 @@
 
 # Create the build directories
 $(CFG)\$(PLAT)\libmpg123	\
-$(CFG)\$(PLAT)\mpg123-compat:
+$(CFG)\$(PLAT)\mpg123-compat	\
+$(CFG)\$(PLAT)\libout123	\
+$(CFG)\$(PLAT)\mpg123:
 	@-md $@
+
+# Copy out123.h from out123.h.in
+$(CFG)\$(PLAT)\libout123\out123.h: ..\src\libout123\out123.h.in $(CFG)\$(PLAT)\libout123
+	@if not exist $@ copy ..\src\libout123\$(@F).in $@

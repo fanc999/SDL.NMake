@@ -36,9 +36,9 @@ MPG123_COMPAT_SRCS =	\
 	..\src\compat\compat.c
 
 !if "$(USE_ASM_OPT)" == "1"
-MPG123_ASM_OPT_SRCS = ..\src\libmpg123\dct64_i386.c
+LIBMPG123_ASM_OPT_SRCS = ..\src\libmpg123\dct64_i386.c
 !if "$(PLAT)" == "x64"
-MPG123_ASM_SRCS =	\
+LIBMPG123_ASM_SRCS =	\
 	..\src\libmpg123\getcpuflags_x86_64.S	\
 	..\src\libmpg123\dct36_x86_64.S	\
 	..\src\libmpg123\synth_x86_64_float.S	\
@@ -53,7 +53,7 @@ MPG123_ASM_SRCS =	\
 	..\src\libmpg123\synth_stereo_x86_64_accurate.S
 
 !else
-MPG123_ASM_SRCS =	\
+LIBMPG123_ASM_SRCS =	\
 	..\src\libmpg123\dct36_3dnow.S	\
 	..\src\libmpg123\dct36_3dnowext.S	\
 	..\src\libmpg123\dct36_sse.S	\
@@ -79,8 +79,8 @@ MPG123_ASM_SRCS =	\
 
 !endif
 !else
-MPG123_ASM_OPT_SRCS =
-MPG123_ASM_SRCS =
+LIBMPG123_ASM_OPT_SRCS =
+LIBMPG123_ASM_SRCS =
 !endif
 
 MPG123_MSVC_COMPAT_SRCS = ..\ports\MSVC++\msvc.c
@@ -110,16 +110,48 @@ LIBMPG123_BASE_SRCS =	\
 	..\src\libmpg123\synth_s32.c	\
 	..\src\libmpg123\tabinit.c
 
+!if "$(SDL)" == "1"
+LIBOUT123_STATIC_MOD_SRC = ..\src\libout123\modules\sdl.c
+!elseif "$(LEGACY_WINDOWS)" == "1"
+LIBOUT123_STATIC_MOD_SRC = ..\src\libout123\modules\win32.c
+!else
+LIBOUT123_STATIC_MOD_SRC = ..\src\libout123\modules\win32_wasapi.c
+!endif
+
+LIBOUT123_SRCS =	\
+	..\src\libout123\libout123.c	\
+	..\src\libout123\legacy_module.c	\
+	..\src\libout123\stringlists.c	\
+	..\src\libout123\wav.c	\
+	$(LIBOUT123_STATIC_MOD_SRC)
+
+MPG123_SRCS =	\
+	..\src\audio.c	\
+	..\src\common.c	\
+	..\src\sysutil.c	\
+	..\src\control_generic.c	\
+	..\src\equalizer.c	\
+	..\src\getlopt.c	\
+	..\src\httpget.c	\
+	..\src\resolver.c	\
+	..\src\genre.c	\
+	..\src\mpg123.c	\
+	..\src\metaprint.c	\
+	..\src\local.c	\
+	..\src\playlist.c	\
+	..\src\streamdump.c	\
+	..\src\term.c
+
 NULL=
 
 # Create the list of .obj files
 !if [call create-lists.bat header mpg123_objs.mak libmpg123_OBJS]
 !endif
 
-!if [for %c in ($(LIBMPG123_BASE_SRCS) $(MPG123_ASM_OPT_SRCS)) do @if "%~xc" == ".c" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\libmpg123\%~nc.obj]
+!if [for %c in ($(LIBMPG123_BASE_SRCS) $(LIBMPG123_ASM_OPT_SRCS)) do @if "%~xc" == ".c" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\libmpg123\%~nc.obj]
 !endif
 
-!if [for %c in ($(MPG123_ASM_SRCS)) do @if "%~xc" == ".S" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\libmpg123\%~nc.obj]
+!if [for %c in ($(LIBMPG123_ASM_SRCS)) do @if "%~xc" == ".S" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\libmpg123\%~nc.obj]
 !endif
 
 !if [call create-lists.bat footer mpg123_objs.mak]
@@ -129,6 +161,15 @@ NULL=
 !endif
 
 !if [for %c in ($(MPG123_COMPAT_SRCS) $(MPG123_MSVC_COMPAT_SRCS)) do @if "%~xc" == ".c" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\mpg123-compat\%~nc.obj]
+!endif
+
+!if [call create-lists.bat footer mpg123_objs.mak]
+!endif
+
+!if [call create-lists.bat header mpg123_objs.mak libout123_OBJS]
+!endif
+
+!if [for %c in ($(LIBOUT123_SRCS)) do @if "%~xc" == ".c" @call create-lists.bat file mpg123_objs.mak ^$(CFG)\^$(PLAT)\libout123\%~nc.obj]
 !endif
 
 !if [call create-lists.bat footer mpg123_objs.mak]

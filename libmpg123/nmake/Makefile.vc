@@ -18,7 +18,7 @@
 # into the lists we need for compilation and introspection
 !include create-lists-msvc.mak
 
-all: $(LIBMPG123_LIB)
+all: $(LIBMPG123_LIBS)
 
 tests: all
 

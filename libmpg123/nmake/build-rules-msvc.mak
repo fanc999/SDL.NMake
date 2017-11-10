@@ -21,6 +21,20 @@
 $<
 <<
 
+{..\src\libmpg123\}.S{$(CFG)\$(PLAT)\libmpg123\}.obj:
+	$(CPP) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /FI..\nmake\mangle.h /EP /TC $< /nologo > $(CFG)\$(PLAT)\libmpg123\$(@B).asm
+	$(YASM) $(YASM_BASE_FLAGS) $(YASM_ARCH_FLAGS) -o $@ $(CFG)\$(PLAT)\libmpg123\$(@B).asm
+
+{..\src\libout123\}.c{$(CFG)\$(PLAT)\libout123\}.obj::
+	$(CC) $(LIBOUT123_INCLUDES) $(LIBOUT123_CFLAGS) /Fo$(CFG)\$(PLAT)\libout123\ /c @<<
+$<
+<<
+
+{..\src\libout123\modules\}.c{$(CFG)\$(PLAT)\libout123\}.obj::
+	$(CC) $(LIBOUT123_INCLUDES) $(LIBOUT123_CFLAGS) /Fo$(CFG)\$(PLAT)\libout123\ /c @<<
+$<
+<<
+
 {..\src\compat\}.c{$(CFG)\$(PLAT)\mpg123-compat\}.obj::
 	$(CC) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
 $<
@@ -30,10 +44,6 @@ $<
 	$(CC) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /Fo$(CFG)\$(PLAT)\mpg123-compat\ /c @<<
 $<
 <<
-
-{..\src\libmpg123\}.S{$(CFG)\$(PLAT)\libmpg123\}.obj:
-	$(CPP) $(LIBMPG123_INCLUDES) $(LIBMPG123_CFLAGS) /FI..\nmake\mangle.h /EP /TC $< /nologo > $(CFG)\$(PLAT)\libmpg123\$(@B).asm
-	$(YASM) $(YASM_BASE_FLAGS) $(YASM_ARCH_FLAGS) -o $@ $(CFG)\$(PLAT)\libmpg123\$(@B).asm
 
 # Rules for building .rc files
 
@@ -47,6 +57,7 @@ $<
 
 # Rules for building .lib files
 $(LIBMPG123_LIB): $(CFG)\$(PLAT)\libmpg123.dll
+$(LIBOUT123_LIB): $(CFG)\$(PLAT)\libout123.dll
 
 # Rules for linking DLLs
 # Format is as follows (the mt command is needed for MSVC 2005/2008 builds):
@@ -57,6 +68,10 @@ $(LIBMPG123_LIB): $(CFG)\$(PLAT)\libmpg123.dll
 # 	@-if exist $@.manifest mt /manifest $@.manifest /outputresource:$@;2
 $(CFG)\$(PLAT)\libmpg123.dll: $(CFG)\$(PLAT)\libmpg123 $(CFG)\$(PLAT)\mpg123-compat $(libmpg123_OBJS) $(mpg123_compat_OBJS)
 	link /DLL $(LIBMPG123_LDFLAGS) -out:$@ $(LIBMPG123_DEP_LIBS) $(libmpg123_OBJS) $(mpg123_compat_OBJS)
+	@-if exist $@.manifest mt /manifest $@.manifest /outputresource:$@;2
+
+$(CFG)\$(PLAT)\libout123.dll: $(LIBMPG123_LIB) $(CFG)\$(PLAT)\libout123\out123.h $(libout123_OBJS) $(mpg123_compat_OBJS)
+	link /DLL $(LIBMPG123_LDFLAGS) -out:$@ $(LIBMPG123_LIB) $(LIBOUT123_DEP_LIBS) $(libout123_OBJS) $(mpg123_compat_OBJS)
 	@-if exist $@.manifest mt /manifest $@.manifest /outputresource:$@;2
 
 # Rules for linking Executables
@@ -81,6 +96,8 @@ clean:
 	@-if exist $(CFG)\$(PLAT)\*.dll del /f /q $(CFG)\$(PLAT)\*.dll.manifest
 	@-del /f /q $(CFG)\$(PLAT)\*.dll
 	@-del /f /q $(CFG)\$(PLAT)\*.ilk
+	@-del /f /q $(CFG)\$(PLAT)\libout123\*.obj
+	@-del /f /q $(CFG)\$(PLAT)\libout123\out123.h
 	@-del /f /q $(CFG)\$(PLAT)\libmpg123\*.obj
 	@-del /f /q $(CFG)\$(PLAT)\libmpg123\*.asm
 	@-del /f /q $(CFG)\$(PLAT)\mpg123-compat\*.obj
