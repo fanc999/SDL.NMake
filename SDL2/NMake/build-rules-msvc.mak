@@ -145,7 +145,7 @@ $<
 <<
 
 {..\src\main\windows\}.c{$(CFG)\$(PLAT)\SDL2main\}.obj::
-	$(CC) $(SDL_CFLAGS) $(SDL_INCLUDES) /Fo$(CFG)\$(PLAT)\SDL2main\ /c @<<
+	$(CC) $(SDL_CFLAGS) $(SDL_INCLUDES) /Fo$(CFG)\$(PLAT)\SDL2main\ /c /Fd$(CFG)\$(PLAT)\SDL2main.pdb @<<
 $<
 <<
 
